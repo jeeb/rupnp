@@ -1,5 +1,6 @@
 use crate::{Device, Error, Result};
 use futures_util::stream::{Stream, StreamExt, TryStreamExt};
+use http::Uri;
 use ssdp_client::SearchTarget;
 use std::time::Duration;
 
@@ -69,6 +70,18 @@ pub async fn discover_with_properties<'a>(
     Ok(ssdp_client::search(search_target, timeout, 3, ttl)
         .await?
         .map_err(Error::SSDPError)
-        .map(|res| Ok(res?.location().parse()?))
-        .and_then(move |url| Device::from_url_and_properties(url, extra_keys)))
+        .map(|res| {
+            Ok(res?)
+        } )
+        .and_then(move |res| {
+            let loc = res.location().parse::<Uri>().unwrap();
+            let dst_ip = res.dst_ip().unwrap();
+            let if_index = res.if_index().unwrap();
+            Device::from_url_and_properties(
+                loc,
+                Some(dst_ip),
+                Some(if_index),
+                extra_keys,
+            )
+        }))
 }

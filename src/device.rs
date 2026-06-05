@@ -12,6 +12,7 @@ use ssdp_client::URN;
 use std::collections::HashMap;
 use std::hash::Hash;
 use std::hash::Hasher;
+use std::net::IpAddr;
 
 #[derive(Debug, Clone)]
 /// A UPnP Device.
@@ -20,22 +21,30 @@ use std::hash::Hasher;
 pub struct Device {
     url: Uri,
     device_spec: DeviceSpec,
+    dst_ip: Option<IpAddr>,
+    if_index: Option<u32>,
 }
 impl Device {
     pub fn url(&self) -> &Uri {
         &self.url
     }
+    pub fn dst_ip(&self) -> &Option<IpAddr> {
+        &self.dst_ip
+    }
+    pub fn if_index(&self) -> &Option<u32> {
+        &self.if_index
+    }
 
     /// Creates a UPnP device from the given url.
     /// The url should point to the `/device_description.xml` or similar of the device.
     /// If you dont know the concrete location, use [`discover`](fn.discover.html) instead.
-    pub async fn from_url(url: Uri) -> Result<Self> {
-        Self::from_url_and_properties(url, &[]).await
+    pub async fn from_url(url: Uri, dst_ip: Option<IpAddr>, if_index: Option<u32>) -> Result<Self> {
+        Self::from_url_and_properties(url, dst_ip, if_index, &[]).await
     }
 
     /// Creates a UPnP device from the given url, defining extra device properties
     /// to be accessed with `get_extra_property`.
-    pub async fn from_url_and_properties(url: Uri, extra_keys: &[&str]) -> Result<Self> {
+    pub async fn from_url_and_properties(url: Uri, dst_ip: Option<IpAddr>, if_index: Option<u32>, extra_keys: &[&str]) -> Result<Self> {
         let body = hyper_util::client::legacy::Client::builder(TokioExecutor::new())
             .build_http::<Empty<Bytes>>()
             .get(url.clone())
@@ -54,7 +63,12 @@ impl Device {
         let device = utils::find_root(&document, "device", "Device Description")?;
         let device_spec = DeviceSpec::from_xml(device, extra_keys)?;
 
-        Ok(Self { url, device_spec })
+        Ok(Self {
+            url,
+            device_spec,
+            dst_ip,
+            if_index,
+        })
     }
 }
 impl std::ops::Deref for Device {

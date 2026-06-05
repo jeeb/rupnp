@@ -1,6 +1,6 @@
 [package]
 name = "rupnp"
-version = "3.0.0"
+version = "3.1.0"
 authors = ["Jakob Hellermann <jakob.hellermann@protonmail.com>"]
 readme = "README.md"
 repository = "https://github.com/jakobhellermann/rupnp"
@@ -24,7 +24,7 @@ futures-util = { version = "0.3", default-features = false }
 genawaiter = { version = "0.99", default-features = false, features = ["futures03"], optional = true }
 if-addrs = { version = "0.13", optional = true }
 http = "1.0"
-ssdp-client = "2.0"
+ssdp-client = "2.2"
 roxmltree = "0.20"
 hyper = { version = "1.0", features = ["client", "http1"] }
 hyper-util = { version = "0.1.11", features = ["client", "client-legacy", "http1"] }
@@ -36,6 +36,8 @@ tokio = { version = "1.0", features = ["macros", "fs", "rt-multi-thread"] }
 futures = "0.3"
 anyhow = "1.0"
 
+[patch.crates-io]
+ssdp-client = { git = 'https://github.com/jeeb/ssdp-client.git', branch = 'add_receival_info' }
 
 [[example]]
 name = "subscribe"

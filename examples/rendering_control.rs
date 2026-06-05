@@ -5,7 +5,7 @@ async fn main() -> Result<(), rupnp::Error> {
     let url = Uri::from_static("http://192.168.178.40:1400/xml/device_description.xml");
     let service_urn = URN::service("schemas-upnp-org", "RenderingControl", 1);
 
-    let device = Device::from_url(url).await?;
+    let device = Device::from_url(url, None, None).await?;
     let service = device.find_service(&service_urn).unwrap();
 
     let args = "<InstanceID>0</InstanceID><Channel>Master</Channel>";

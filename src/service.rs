@@ -93,7 +93,7 @@ impl Service {
     ///
     /// let urn = URN::service("schemas-upnp-org", "RenderingControl", 1);
     ///
-    /// let device = Device::from_url( some_url ).await?;
+    /// let device = Device::from_url( some_url , None, None ).await?;
     /// let service = device.find_service(&urn)
     ///     .expect("service exists");
     ///
