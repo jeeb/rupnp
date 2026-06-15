@@ -18,10 +18,12 @@ async fn main() -> Result<()> {
         };
 
         println!(
-            "{} - {} @ {}",
+            "{} - {} @ {} (dst address: {}, interface #{})",
             device.device_type(),
             device.friendly_name(),
-            device.url()
+            device.url(),
+            device.dst_ip().unwrap(),
+            device.if_index().unwrap(),
         );
     }
 
