@@ -22,7 +22,7 @@ pub struct Device {
     url: Uri,
     device_spec: DeviceSpec,
     dst_ip: Option<IpAddr>,
-    if_index: Option<u32>,
+    if_index: Option<u64>,
 }
 impl Device {
     pub fn url(&self) -> &Uri {
@@ -31,20 +31,20 @@ impl Device {
     pub fn dst_ip(&self) -> &Option<IpAddr> {
         &self.dst_ip
     }
-    pub fn if_index(&self) -> &Option<u32> {
+    pub fn if_index(&self) -> &Option<u64> {
         &self.if_index
     }
 
     /// Creates a UPnP device from the given url.
     /// The url should point to the `/device_description.xml` or similar of the device.
     /// If you dont know the concrete location, use [`discover`](fn.discover.html) instead.
-    pub async fn from_url(url: Uri, dst_ip: Option<IpAddr>, if_index: Option<u32>) -> Result<Self> {
+    pub async fn from_url(url: Uri, dst_ip: Option<IpAddr>, if_index: Option<u64>) -> Result<Self> {
         Self::from_url_and_properties(url, dst_ip, if_index, &[]).await
     }
 
     /// Creates a UPnP device from the given url, defining extra device properties
     /// to be accessed with `get_extra_property`.
-    pub async fn from_url_and_properties(url: Uri, dst_ip: Option<IpAddr>, if_index: Option<u32>, extra_keys: &[&str]) -> Result<Self> {
+    pub async fn from_url_and_properties(url: Uri, dst_ip: Option<IpAddr>, if_index: Option<u64>, extra_keys: &[&str]) -> Result<Self> {
         let body = hyper_util::client::legacy::Client::builder(TokioExecutor::new())
             .build_http::<Empty<Bytes>>()
             .get(url.clone())
