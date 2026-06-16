@@ -74,13 +74,10 @@ pub async fn discover_with_properties<'a>(
             Ok(res?)
         } )
         .and_then(move |res| {
-            let loc = res.location().parse::<Uri>().unwrap();
-            let dst_ip = res.dst_ip().unwrap();
-            let if_index = res.if_index().unwrap();
             Device::from_url_and_properties(
-                loc,
-                Some(dst_ip),
-                Some(if_index),
+                res.location().parse::<Uri>().unwrap(),
+                *res.dst_ip(),
+                *res.if_index(),
                 extra_keys,
             )
         }))
